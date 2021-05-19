@@ -1,25 +1,34 @@
-import logo from './logo.svg';
-import './App.css';
+import React from 'react'
+import { Button, Form, FormGroup, Label, Input, FormText } from 'reactstrap';
 
-function App() {
+export default function App(props) {
+  
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div style={{margin:"5%", border:"none"}}>
+      
+      <FormGroup tag="fieldset">
+        <legend>Notification Type:</legend>
+        <FormGroup check>
+          <Label check>
+              <Input type="radio" name="radio1" />{' '}
+              Title and Message
+          </Label>
+        </FormGroup>
+        <FormGroup check>
+          <Label check>
+            <Input type="radio" name="radio1" />{' '}
+            Title, Start time and End time
+          </Label>
+        </FormGroup>
+        <FormGroup check disabled>
+          <Label check>
+            <Input type="radio" name="radio1" />{' '}
+            Title and Start time
+          </Label>
+        </FormGroup>
+      </FormGroup>
+      
+       
     </div>
-  );
+  )  
 }
-
-export default App;

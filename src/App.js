@@ -43,6 +43,14 @@ export default function App(props) {
 
   useEffect(()=>{
     const messaging= firebase.messaging()
+    messaging.onMessage(function(payload){
+        console.log('onMessage: ',payload);
+    })
+  },[])
+
+
+  function gettingFirebaseToken(){
+    const messaging= firebase.messaging()
     messaging.requestPermission().then((token)=>{
       return messaging.getToken()
     }).then(token=>{
@@ -50,26 +58,13 @@ export default function App(props) {
       axios.get(`https://fcm-testing.herokuapp.com/api/check_registration?reg_id=${token}`)
       .then(res =>{
         res.data.is_registered === false ? setUserDevice(token) : alert("You are already registered")
+        console.log(res.data.is_registered)
       })
     }).catch(()=>{
       console.log('Error!')
+      alert('Error!')
     })
-    messaging.onMessage(function(payload){
-            console.log('onMessage: ',payload);
-    })
-
-
-    // window.addEventListener('load',()=>{
-    //   axios.get(`https://fcm-testing.herokuapp.com/api/check_registration?reg_id=${token}`)
-    //   .then(res =>{
-    //     res.data.is_registered === false ? setUserDevice(token) : alert("You are already registered")
-    //   })
-    // })
-  },[])
-
-
-  
-
+  }
 
   function submitMessage(e){
     e.preventDefault();
@@ -121,14 +116,34 @@ export default function App(props) {
     setTitle("")
   }
 
+  function handleRequestNotification(){
+  if (!("Notification" in window)) {
+    alert("This browser does not support desktop notification");
+  }
+  else if (Notification.permission === "granted") {
+    // var notification = new Notification("Hi there!");
+    gettingFirebaseToken();
+  }
+  else if (Notification.permission !== "denied") {
+    Notification.requestPermission().then(function (permission) {
+      if (permission === "granted") {
+        // var notification = new Notification("Hi there!");
+        gettingFirebaseToken();
+      }
+    });
+  }
+
+  }
+
 
   return (
     <div style={{margin:"5%"}}>
+      <Button color="primary" onClick={handleRequestNotification}>Allow Notification</Button>
       <FormGroup tag="fieldset">
         <legend>Notification:</legend>
         <FormGroup check>
           <Label check>
-              <Input type="radio" name="radio1" onClick={function(){
+              <Input type="checkbox" name="radio1" onClick={function(){
                 setDisable(!disabled)
               }} />{' '}
               Title and Message
@@ -148,7 +163,7 @@ export default function App(props) {
           </Form>
         <FormGroup check>
           <Label check>
-            <Input type="radio" name="radio1" onClick={function(){
+            <Input type="checkbox" name="radio1" onClick={function(){
                 setDisable1(!disabled1)
               }}/>{' '}
             Title and Start time
@@ -169,7 +184,7 @@ export default function App(props) {
 
           <FormGroup check>
           <Label check>
-            <Input type="radio" name="radio1" onClick={function(){
+            <Input type="checkbox" name="radio1" onClick={function(){
                 setDisable2(!disabled2)
               }}/>{' '}
             Title , Start time and  End time

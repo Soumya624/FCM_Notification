@@ -42,14 +42,15 @@ export default function App(props) {
   }
 
   useEffect(()=>{
-    const messaging= firebase.messaging()
-    messaging.onMessage(function(payload){
-        console.log('onMessage: ',payload);
-    })
+    // const messaging= firebase.messaging()
+    // messaging.onMessage(function(payload){
+    //     console.log('onMessage: ',payload);
+    // })
   },[])
 
 
   function gettingFirebaseToken(){
+    if(firebase.messaging.isSupported()){
     const messaging= firebase.messaging()
     messaging.requestPermission().then((token)=>{
       return messaging.getToken()
@@ -58,12 +59,20 @@ export default function App(props) {
       axios.get(`https://fcm-testing.herokuapp.com/api/check_registration?reg_id=${token}`)
       .then(res =>{
         res.data.is_registered === false ? setUserDevice(token) : alert("You are already registered")
+        console.log('jhj')
         console.log(res.data.is_registered)
       })
     }).catch(()=>{
       console.log('Error!')
       alert('Error!')
     })
+    // messaging.onMessage(function(payload){
+    //     console.log('onMessage: ',payload);
+    // })
+  }
+  else{
+    alert('Your Browser does not support Firebase SDK')
+  }
   }
 
   function submitMessage(e){
@@ -134,8 +143,7 @@ export default function App(props) {
   }
 
   }
-
-
+  
   return (
     <div style={{margin:"5%"}}>
       <Button color="primary" onClick={handleRequestNotification}>Allow Notification</Button>
